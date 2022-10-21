@@ -43,3 +43,11 @@
 .tab {
   outline: none;
 }
+
+.params {
+  list-style: none;
+  border: 2px solid;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
