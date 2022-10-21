@@ -76,7 +76,7 @@ function App() {
       title: 'Pegar Todos os Jogos',
       method: 'GET',
       params: [],
-      returnType: 'Retorna uma lista de objetos de Jogos.',
+      returnType: 'Retornar uma lista de objetos de Jogo.',
       path: '/api/jogos',
       value: 'get-all-jogos',
       color: 'blue'
@@ -93,7 +93,7 @@ function App() {
           obs: 'Para pegar um jogo, deve-se preencher o id'
         },
       ],
-      returnType: 'Retorna um único objeto de Jogo.',
+      returnType: 'Retornar um único objeto de Jogo.',
       path: '/api/jogos/id',
       value: 'get-jogo-by-id',
       color: 'blue'
@@ -117,7 +117,7 @@ function App() {
           obs: 'Valor em reais do Jogo'
         },
       ],
-      returnType: 'Retorna o novo objeto de Jogo cadastrado.',
+      returnType: 'Cadastrar e retornar o novo objeto de Jogo.',
       path: '/api/jogos',
       value: 'create-jogo',
       color: 'green'
@@ -148,7 +148,7 @@ function App() {
           obs: 'Id do Jogo que irá receber novos dados'
         },
       ],
-      returnType: 'Retorna o objeto de Jogo com os novos dados.',
+      returnType: 'Alterar retornar o objeto de Jogo com os novos dados.',
       path: '/api/jogos/id',
       value: 'update-jogo',
       color: 'orange'
@@ -197,7 +197,7 @@ function App() {
                   <h3>Método: {endpoint.method}</h3>
                   <h3>Objetivo: {endpoint.returnType}</h3>
                   <h3>Caminho do endpoint: {endpoint.path}</h3>
-                  <h3>Parametros:</h3>
+                  {!!endpoint.params.length && <h3>Parametros:</h3>}
                   <ul>
                     {endpoint.params.map((param, index) =>
                       <Grid className='params' style={{ color: 'black', borderColor: endpoint.color }} key={index}>
