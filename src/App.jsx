@@ -28,6 +28,7 @@ function App() {
 
 
   const mudarDeAba = (evento, value) => {
+    setLinhas([])
     setAbaAtual(value)
     setCamposParams({ id: '', nome: '', valor: '' })
   }
@@ -279,14 +280,15 @@ function App() {
           })}
           </TabPanel>
       </TabContext>
-      <DataGrid
+      <h2>Resultado</h2>
+      {!!linhas.length && <DataGrid
         style={{ height: 400, width: '100%' }}
         rows={linhas}
         columns={colunas}
         pageSize={10}
         rowsPerPageOptions={[10]}
         checkboxSelection
-      />
+      />}
      </Grid>
     </div>
   )
