@@ -39,6 +39,8 @@ function App() {
     valoresParametros
   ) => {
 
+    let resposta
+
     if ((metodo === 'POST' || metodo === 'PUT') && (valoresParametros.nome === '' || valoresParametros.valor === '')) return alert("Os campos 'nome' e 'valor' precisam ser preenchidos!")
     if (caminho.includes('id') && valoresParametros.id === '') return alert("O campo 'id' precisa ser preenchido para essa requisição!")
 
@@ -47,7 +49,15 @@ function App() {
       if (parametro.type === 'Path') caminho = caminho.replace(parametro.name, valoresParametros[parametro.name])
       if (parametro.type === 'Body') corpo[parametro.name] = valoresParametros[parametro.name]
     })
-    const resposta = await axios({method: metodo, url:`http://localhost:8080${caminho}`, data: corpo})
+
+    try {
+      resposta = await axios({method: metodo, url:`http://localhost:8080${caminho}`, data: corpo})
+
+    } catch (e) {
+      setCarregandoRequisicao(false)
+      return alert('Requisição não concluída ou retornou um erro.\n' + e)
+    }
+
 
     let jogos = []
     if(resposta.data.length > 0) {
@@ -72,6 +82,7 @@ function App() {
 
     } else if (resposta.data.deleted) {
       alert('Registro deletado com sucesso!')
+
     }
   }
 
