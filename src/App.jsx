@@ -19,6 +19,13 @@ function App() {
   const [ abaAtual, setAbaAtual ] = useState('get-all-jogos')
   const [ linhas, setLinhas ] = useState([])
   const [ camposParams, setCamposParams ] = useState({ id: '', nome: '', valor: '' })
+  const [ carregandoRequisicao, setCarregandoRequisicao ] = useState(false)
+
+
+  const mostrarModal = (carregando) => {
+    setCarregandoRequisicao(carregando)
+  }
+
 
   const mudarDeAba = (evento, value) => {
     setAbaAtual(value)
@@ -31,6 +38,10 @@ function App() {
     caminho, 
     valoresParametros
   ) => {
+
+    if ((metodo === 'POST' || metodo === 'PUT') && (valoresParametros.nome === '' || valoresParametros.valor === '')) return alert("Os campos 'nome' e 'valor' precisam ser preenchidos!")
+    if (caminho.includes('id') && valoresParametros.id === '') return alert("O campo 'id' precisa ser preenchido para essa requisição!")
+
     let corpo = {}
     parametros.forEach(parametro => {
       if (parametro.type === 'Path') caminho = caminho.replace(parametro.name, valoresParametros[parametro.name])
@@ -60,16 +71,19 @@ function App() {
       setLinhas(jogos)
 
     } else if (resposta.data.deleted) {
-      alert('Jogo deletado com sucesso!')
+      alert('Registro deletado com sucesso!')
     }
-
   }
+
+
 
   const colunas = [
     { field: 'codigo', headerName: 'CODIGO', width: 130 },
     { field: 'nome', headerName: 'NOME', width: 130 },
     { field: 'valor', headerName: 'VALOR', width: 130 },
   ]
+
+
 
   const endpoints = [
     {
@@ -174,7 +188,20 @@ function App() {
 
   return (
     <div className='App'>
-     <Grid>
+     {!!carregandoRequisicao && 
+     <Grid 
+       style={{
+         position: 'fixed',
+         top: '50%',
+         right: 0,
+         bottom: 0,
+         left: 0,
+         zIndex: 1,
+      }}><CircularProgress />
+      <br />
+      <strong>Por favor, aguarde...</strong>
+     </Grid>}
+     <Grid id='grid-main-content'>
       <TabContext value={abaAtual}>
         <TabList onChange={mudarDeAba}>
           {endpoints.map((endpoint, index) =>
@@ -217,18 +244,24 @@ function App() {
                       </Grid>
                     )}
                   </ul>
-                  <Button 
-                    style={{
-                      outline: 'none',
-                      fontWeight: 'bold'
-                    }}
-                    variant='contained'
-                    onClick={async () => {
-                      await requisicao(endpoint.method, endpoint.params, endpoint.path, camposParams)
-                    }}
-                  >
-                    Enviar Requisição
-                  </Button>
+                  <Tooltip title={ 'Enviar requisição ao endpoint ' + endpoint.path } arrow>
+                    <Button 
+                      style={{
+                        outline: 'none',
+                        fontWeight: 'bold'
+                      }}
+                      variant='contained'
+                      onClick={async () => {
+                        document.getElementById('grid-main-content').style.opacity = '0.5'
+                        mostrarModal(true)
+                        await requisicao(endpoint.method, endpoint.params, endpoint.path, camposParams)
+                        mostrarModal(false)
+                        document.getElementById('grid-main-content').style.opacity = '1'
+                      }}
+                    >
+                      Enviar Requisição
+                    </Button>
+                  </Tooltip>
                 </Grid>
               )
             }
