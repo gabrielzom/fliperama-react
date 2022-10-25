@@ -13,6 +13,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios'
 
 import './App.css'
+import { color, padding } from '@mui/system';
 
 function App() {
 
@@ -213,7 +214,9 @@ function App() {
       <br />
       <strong>Por favor, aguarde...</strong>
      </Grid>}
-     <Grid id='grid-main-content'>
+     <Grid 
+      id='grid-main-content'
+      >
       <TabContext value={abaAtual}>
         <TabList onChange={mudarDeAba}>
           {endpoints.map((endpoint, index) =>
@@ -237,59 +240,79 @@ function App() {
                   <h3>Objetivo: {endpoint.returnType}</h3>
                   <h3>Caminho do endpoint: {endpoint.path}</h3>
                   {!!endpoint.params.length && <h3>Parametros:</h3>}
-                  <ul>
+                  <Grid 
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'flex-start',
+                    }}
+                  >
                     {endpoint.params.map((param, index) =>
-                      <Grid className='params' style={{ color: 'black', borderColor: endpoint.color }} key={index}>
+                      <Grid className='params' style={{ color: 'black', borderColor: endpoint.color, margin: '1rem' }} key={index}>
                         <li><strong>Nome: </strong> {param.name}</li>
                         <li><strong>Tipo do parâmetro: </strong>{param.type}</li>
                         <li><strong>Tipo de valor: </strong>{param.valueType}</li>
                         <li><strong>Obrigatório: </strong>{param.required ? 'SIM' : 'NÃO'}</li>
                         <li><strong>Observação: </strong>{param.obs}</li>
+
                         <TextField
                           style={{ marginBottom: '3rem' }}
                           onKeyUp={evento => {
                             setCamposParams({...camposParams, [param.name]: evento.target.value})}
                           } 
                           label={param.name} 
-                          variant='filled' 
+                          variant='standard' 
                         />
                       </Grid>
                     )}
-                  </ul>
-                  <Tooltip title={ 'Enviar requisição ao endpoint ' + endpoint.path } arrow>
+                  </Grid>
+                  <Grid 
+                    style={{
+                      marginTop: '2rem',
+                      display: 'flex',
+                      justifyContent: 'space-around',
+                    }}
+                  >
+                    <Tooltip title={ 'Enviar requisição ao endpoint ' + endpoint.path } arrow>
+                      <Button
+                        style={{
+                          outline: 'none',
+                          fontWeight: 'bold',
+                          backgroundColor: endpoint.color
+                        }}
+                        variant='contained'
+                        onClick={async () => {
+                          document.getElementById('grid-main-content').style.opacity = '0.5'
+                          mostrarModal(true)
+                          await requisicao(endpoint.method, endpoint.params, endpoint.path, camposParams)
+                          mostrarModal(false)
+                          document.getElementById('grid-main-content').style.opacity = '1'
+                        }}
+                      >
+                        Enviar Requisição
+                      </Button>
+                    </Tooltip>
                     <Button 
                       style={{
                         outline: 'none',
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
+                        color: endpoint.color,
+                        borderColor: endpoint.color
                       }}
-                      variant='contained'
-                      onClick={async () => {
-                        document.getElementById('grid-main-content').style.opacity = '0.5'
-                        mostrarModal(true)
-                        await requisicao(endpoint.method, endpoint.params, endpoint.path, camposParams)
-                        mostrarModal(false)
-                        document.getElementById('grid-main-content').style.opacity = '1'
-                      }}
+                      variant='outlined'
+                      onClick={() => console.log(selectionModel)}
                     >
-                      Enviar Requisição
+                      Mostrar seleção Tabela
                     </Button>
-                  </Tooltip>
+                  </Grid>
                 </Grid>
+                
               )
+              
             }
           })}
           </TabPanel>
       </TabContext>
       <h2>Resultado</h2>
-      <Button style={{
-          outline: 'none',
-          fontWeight: 'bold'
-        }}
-        variant='outlined'
-        onClick={() => console.log(selectionModel)}
-      >
-        Mostrar seleção Tabela
-      </Button>
       {!!linhas.length && <DataGrid
         style={{ height: 400, width: '100%' }}
         rows={linhas}
