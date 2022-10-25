@@ -20,7 +20,8 @@ function App() {
   const [ linhas, setLinhas ] = useState([])
   const [ camposParams, setCamposParams ] = useState({ id: '', nome: '', valor: '' })
   const [ carregandoRequisicao, setCarregandoRequisicao ] = useState(false)
-
+  const [ selectionModel, setSelectionModel ] = useState([])
+  let data
 
   const mostrarModal = (carregando) => {
     setCarregandoRequisicao(carregando)
@@ -83,7 +84,6 @@ function App() {
 
     } else if (resposta.data.deleted) {
       alert('Registro deletado com sucesso!')
-
     }
   }
 
@@ -240,11 +240,11 @@ function App() {
                   <ul>
                     {endpoint.params.map((param, index) =>
                       <Grid className='params' style={{ color: 'black', borderColor: endpoint.color }} key={index}>
-                        <li><strong>Nome:</strong> {param.name}</li>
-                        <li><strong>Tipo do parâmetro:</strong>{param.type}</li>
-                        <li><strong>Tipo de valor:</strong>{param.valueType}</li>
-                        <li><strong>Obrigatório:</strong>{param.required ? 'SIM' : 'NÃO'}</li>
-                        <li><strong>Observação:</strong> {param.obs}</li>
+                        <li><strong>Nome: </strong> {param.name}</li>
+                        <li><strong>Tipo do parâmetro: </strong>{param.type}</li>
+                        <li><strong>Tipo de valor: </strong>{param.valueType}</li>
+                        <li><strong>Obrigatório: </strong>{param.required ? 'SIM' : 'NÃO'}</li>
+                        <li><strong>Observação: </strong>{param.obs}</li>
                         <TextField
                           style={{ marginBottom: '3rem' }}
                           onKeyUp={evento => {
@@ -281,6 +281,15 @@ function App() {
           </TabPanel>
       </TabContext>
       <h2>Resultado</h2>
+      <Button style={{
+          outline: 'none',
+          fontWeight: 'bold'
+        }}
+        variant='outlined'
+        onClick={() => console.log(selectionModel)}
+      >
+        Mostrar seleção Tabela
+      </Button>
       {!!linhas.length && <DataGrid
         style={{ height: 400, width: '100%' }}
         rows={linhas}
@@ -288,6 +297,11 @@ function App() {
         pageSize={10}
         rowsPerPageOptions={[10]}
         checkboxSelection
+        onSelectionModelChange={(newSelectionModel) => {
+          setSelectionModel(newSelectionModel)
+        }}
+        selectionModel={selectionModel}
+        {...data}
       />}
      </Grid>
     </div>
