@@ -11,9 +11,7 @@ import {
 import { TabPanel, TabList, TabContext } from '@mui/lab'
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios'
-
 import './App.css'
-import { color, padding } from '@mui/system';
 
 function App() {
 
